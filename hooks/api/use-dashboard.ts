@@ -7,6 +7,7 @@ export const useDashboard = () => {
 
   return useQuery({
     queryKey: ["stats"],
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       try {
         const res = await api.get<Status>("/quotations/admin/stats");
@@ -25,6 +26,8 @@ export const useQuotationsList = (page: number, limit = 10) => {
 
   return useQuery<QuotationListResponse>({
     queryKey: ["quotations", page],
+    refetchOnWindowFocus: true,
+
     queryFn: async () => {
       const skip = (page - 1) * limit;
       const res = await api.get<QuotationListResponse>(
@@ -42,6 +45,8 @@ export const useGetQuotation = (id: string) => {
 
   return useQuery<Quotation>({
     queryKey: ["quotation", id],
+    refetchOnWindowFocus: true,
+
     queryFn: async () => {
       const res = await api.get<Quotation>(`/quotations/${id}`);
       return res.data;

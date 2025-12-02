@@ -1,34 +1,55 @@
-
 import QuotationListItem from "@/components/QuotationListItem";
 import StatCard from "@/components/StatCard";
 import { useDashboard, useQuotationsList } from "@/hooks/api/use-dashboard";
-
 import { useAuthStore } from "@/store/auth";
 import { darkColors } from "@/theme/colors";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+    ActivityIndicator,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View
+} from "react-native";
 
 export default function Index() {
-    const { data: stats, isLoading: statsLoading } = useDashboard();
+    const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useDashboard();
     const { user } = useAuthStore();
     const [page, setPage] = useState(1);
 
-    const { data, isLoading, isFetching } = useQuotationsList(page, 10);
+    const { data, isLoading, isFetching, refetch } = useQuotationsList(page, 10);
+    const [refreshing, setRefreshing] = useState(false);
 
     const totalPages = Math.ceil((data?.count ?? 0) / 10);
 
-    if (statsLoading || isLoading) return (
-        <View style={styles.center}>
-            <ActivityIndicator size="large" color={darkColors.primary} />
-            <Text style={styles.loadingText}>Loading dashboard...</Text>
-        </View>
-    );
+    async function handleRefresh() {
+        setRefreshing(true);
+        await Promise.all([refetch(), refetchStats()]);
+        setRefreshing(false);
+    }
+
+    if (statsLoading || isLoading)
+        return (
+            <View style={styles.center}>
+                <ActivityIndicator size="large" color={darkColors.primary} />
+                <Text style={styles.loadingText}>Loading dashboard...</Text>
+            </View>
+        );
 
     return (
         <FlatList
             style={styles.container}
             data={data?.items}
             keyExtractor={(item) => item.id}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    tintColor={darkColors.primary}
+                    colors={[darkColors.primary]}
+                />
+            }
             ListHeaderComponent={
                 <>
                     <Text style={styles.greeting}>Hello {user?.name} 👋</Text>

@@ -3,7 +3,7 @@ import { darkColors } from "@/theme/colors";
 import { Redirect, Tabs } from "expo-router";
 import { Home, PlusSquare, User } from "lucide-react-native";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const TabIcon = ({
     focused,
@@ -14,37 +14,23 @@ const TabIcon = ({
     icon: any;
     label: string;
 }) => (
-    <View style={{ alignItems: "center", gap: 6 }}>
+    <View style={styles.tabItem}>
         <Icon
             size={22}
             color={focused ? darkColors.primary : darkColors.textMuted}
-            strokeWidth={focused ? 2.3 : 1.8}
+            strokeWidth={focused ? 2 : 1.6}
         />
-
-        {focused && (
-            <Text
-                style={{
-                    fontSize: 10,
-                    color: darkColors.primary,
-                    fontWeight: "600",
-                }}
-            >
-                {label}
-            </Text>
-        )}
-
-        {/* subtle underline indicator */}
-        {focused && (
-            <View
-                style={{
-                    width: 20,
-                    height: 2,
-                    backgroundColor: darkColors.primary,
-                    borderRadius: 10,
-                    marginTop: 2,
-                }}
-            />
-        )}
+        <Text
+            numberOfLines={1}
+            style={[
+                styles.label,
+                {
+                    color: focused ? darkColors.primary : darkColors.textMuted,
+                },
+            ]}
+        >
+            {label}
+        </Text>
     </View>
 );
 
@@ -52,9 +38,8 @@ export default function TabsLayout() {
     const { user, isInitialized, restore } = useAuthStore();
 
     useEffect(() => {
-        restore().catch(console.error);
+        restore();
     }, []);
-
 
     if (!isInitialized) return null;
     if (!user) return <Redirect href="/(auth)/Login" />;
@@ -64,14 +49,8 @@ export default function TabsLayout() {
             screenOptions={{
                 headerShown: false,
                 tabBarShowLabel: false,
-                tabBarStyle: {
-                    backgroundColor: darkColors.background,
-                    height: 60,
-                    borderTopWidth: 0,
-                },
-                sceneStyle: {
-                    backgroundColor: darkColors.background,
-                },
+                tabBarStyle: styles.tabBar,
+                tabBarItemStyle: styles.tabSlot,
             }}
         >
             <Tabs.Screen
@@ -103,3 +82,31 @@ export default function TabsLayout() {
         </Tabs>
     );
 }
+
+const styles = StyleSheet.create({
+    tabBar: {
+        backgroundColor: darkColors.card,
+        borderTopWidth: 1,
+        borderTopColor: darkColors.border,
+        height: 60,
+    },
+
+    // fixes overflow — forces equal spacing
+    tabSlot: {
+        flex: 1,
+    },
+
+    tabItem: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 4,
+    },
+
+    label: {
+        fontSize: 11,
+        fontWeight: "500",
+        maxWidth: 60, // prevents overflow on long label text
+        textAlign: "center",
+    },
+});
