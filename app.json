@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo_test",
-    "slug": "expo_test",
+    "name": "Quotation-Management",
+    "slug": "Quotation-Management",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

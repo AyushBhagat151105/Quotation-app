@@ -1,15 +1,11 @@
-import Register from '@/components/auth/Register'
-import React from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import Register from "@/components/auth/Register";
+import ScreenWrapper from "@/components/Screen";
 
-const register = () => {
-    return (
-        <ScrollView>
-            <Register />
-        </ScrollView>
-    )
+
+export default function RegisterScreen() {
+  return (
+    <ScreenWrapper>
+      <Register />
+    </ScreenWrapper>
+  );
 }
-
-export default register
-
-const styles = StyleSheet.create({})

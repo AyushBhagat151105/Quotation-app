@@ -6,6 +6,6 @@ export const useHelth = () => {
 
   return useQuery({
     queryKey: ["health"],
-    queryFn: () => api.get("/api/v1/health-check"),
+    queryFn: () => api.get("/health-check"),
   });
 };
